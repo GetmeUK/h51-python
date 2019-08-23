@@ -99,6 +99,19 @@ class Asset(_BaseResource):
     def __str__(self):
         return f'Asset: {self.uid}'
 
+    def analyze(self, analyzers, notification_url=None):
+        """Analyze the asset"""
+
+        r = self._client(
+            'post',
+            f'assets/{self.uid}/analyze',
+            params={'notification_url': notification_url},
+            json_type_body=[a.to_json_type() for a in analyzers]
+        )
+
+        if not notification_url:
+            self.meta = r['meta']
+
     def download(self):
         """Download the asset"""
         return self._client(
@@ -121,8 +134,7 @@ class Asset(_BaseResource):
 
         self._document.update(r)
 
-
-    def persist(self,):
+    def persist(self):
         """Set the asset to persist (remove the expires time)"""
 
         r = self._client(
@@ -131,19 +143,6 @@ class Asset(_BaseResource):
         )
 
         self._document.update(r)
-
-    def analyze(self, analyzers, notification_url=None):
-        """Analyze the asset"""
-
-        r = self._client(
-            'post',
-            f'assets/{self.uid}/analyze',
-            params={'notification_url': notification_url},
-            json_type_body=[a.to_json_type() for a in analyzers]
-        )
-
-        if not notification_url:
-            self.meta = r['meta']
 
     @classmethod
     def all(self, client, secure=None, type=None, q=None, rate_buffer=0):

@@ -10,7 +10,7 @@ __all__ = ['Client']
 
 class Client:
     """
-    A client for the Hangar51 API.
+    A client for the H51 (Hangar51) API.
     """
 
     def __init__(self, api_key, api_base_url='https://api.h51.io'):
@@ -60,7 +60,7 @@ class Client:
         """Call the API"""
 
         # Build headers
-        headers = {'X-Hangar51-APIKey': self._api_key}
+        headers = {'X-H51-APIKey': self._api_key}
 
         if json_type_body:
             headers['Content-Type'] = 'application/json'
@@ -83,12 +83,12 @@ class Client:
         )
 
         # Update the rate limit
-        if 'X-Hangar51-RateLimit-Limit' in r.headers:
-            self._rate_limit = int(r.headers['X-Hangar51-RateLimit-Limit'])
+        if 'X-H51-RateLimit-Limit' in r.headers:
+            self._rate_limit = int(r.headers['X-H51-RateLimit-Limit'])
             self._rate_limit_reset \
-                    = float(r.headers['X-Hangar51-RateLimit-Reset'])
+                    = float(r.headers['X-H51-RateLimit-Reset'])
             self._rate_limit_remaining \
-                    = int(r.headers['X-Hangar51-RateLimit-Remaining'])
+                    = int(r.headers['X-H51-RateLimit-Remaining'])
 
         # Handle a successful response
         if r.status_code in [200, 204]:
