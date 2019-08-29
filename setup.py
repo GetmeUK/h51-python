@@ -18,10 +18,10 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='H51',
 
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
+    # Versions should comply with PEP440. For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.2',
+    version='0.0.3',
     description=\
         'The H51 Python library provides a pythonic interface to the H51 API.',
     long_description=long_description,

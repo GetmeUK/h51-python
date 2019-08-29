@@ -13,13 +13,21 @@ class Client:
     A client for the H51 (Hangar51) API.
     """
 
-    def __init__(self, api_key, api_base_url='https://api.h51.io'):
+    def __init__(
+        self,
+        api_key,
+        api_base_url='https://api.h51.io',
+        timeout=None
+    ):
 
         # A key used to authenticate API calls to an account
         self._api_key = api_key
 
         # The base URL to use when calling the API
         self._api_base_url = api_base_url
+
+        # The period of time before requests to the API should timeout
+        self._timeout = timeout
 
         # NOTE: Rate limiting information is only available after a request
         # has been made.
@@ -72,6 +80,10 @@ class Client:
             # Filter out parameters set to `None`
             params = {k: v for k, v in params.items() if v is not None}
 
+        if data:
+            # Filter out data set to `None`
+            data = {k: v for k, v in data.items() if v is not None}
+
         # Make the request
         r = getattr(requests, method.lower())(
             f'{self._api_base_url}/{path}',
@@ -79,7 +91,8 @@ class Client:
             params=params,
             data=data,
             json=json_type_body,
-            files=files
+            files=files,
+            timeout=self._timeout
         )
 
         # Update the rate limit
@@ -123,5 +136,3 @@ class Client:
             error.get('hint'),
             error.get('arg_errors')
         )
-
-

@@ -25,7 +25,7 @@ client = h51.Client('your_api_key...')
 
 # Create an asset
 with open('image.bmp') as f:
-    asset = h51.Asset.create(client, f)
+    asset = h51.resources.Asset.create(client, f)
 
 # Analyze the image asset to find its dominant colours and focal point
 asset.analyze([

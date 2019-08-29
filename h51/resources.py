@@ -192,10 +192,10 @@ class Asset(_BaseResource):
                 'put',
                 f'assets',
                 files={'file': file},
-                params={
+                data={
                     'name': name,
                     'expire': expire,
-                    'secure': secure
+                    'secure': True if secure else None
                 }
             )
         )
