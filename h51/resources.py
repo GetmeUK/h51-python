@@ -1,5 +1,6 @@
 
 from datetime import datetime
+import json
 
 from . import pagination
 
@@ -105,8 +106,12 @@ class Asset(_BaseResource):
         r = self._client(
             'post',
             f'assets/{self.uid}/analyze',
-            params={'notification_url': notification_url},
-            json_type_body=[a.to_json_type() for a in analyzers]
+            data={
+                'analyzers': json.dumps([
+                    a.to_json_type() for a in analyzers
+                ]),
+                'notification_url': notification_url
+            }
         )
 
         if not notification_url:
@@ -184,6 +189,37 @@ class Asset(_BaseResource):
         return assets
 
     @classmethod
+    def analyze_many(
+        cls,
+        client,
+        uids,
+        analyzers,
+        local=False,
+        notification_url=None
+    ):
+        """Analyze one or more assets"""
+
+        if local:
+            analyzers_json = json.dumps({
+                uid: [a.to_json_type() for a in local_analyzers]
+                for uid, local_analyzers in analyzers.items()
+            })
+
+        else:
+            analyzers_json = json.dumps([a.to_json_type() for a in analyzers])
+
+        return client(
+            'post',
+            f'assets/analyze',
+            data={
+                'analyzers': analyzers_json,
+                'local': True if local else None,
+                'notification_url': notification_url,
+                'uids': uids
+            }
+        )
+
+    @classmethod
     def create(cls, client, file, name=None, expire=None, secure=False):
         """Upload an asset to Hangar51"""
         return cls(
@@ -198,6 +234,25 @@ class Asset(_BaseResource):
                     'secure': True if secure else None
                 }
             )
+        )
+
+    @classmethod
+    def expire_many(cls, client, uids, seconds):
+        """
+        Find one or more assets matching the given uids and set them to
+        persist (remove the expires time).
+        """
+
+        if isinstance(seconds, datetime):
+            seconds = datetime.timestamp() - time.time()
+
+        return client(
+            'post',
+            'assets/expire',
+            data={
+                'seconds': seconds,
+                'uids': uids
+            }
         )
 
     @classmethod
@@ -237,6 +292,17 @@ class Asset(_BaseResource):
         """Return an asset matching the given uid"""
         return cls(client, client('get', f'assets/{uid}'))
 
+    @classmethod
+    def persist_many(cls, client, uids):
+        """
+        Find one or more assets matching the given uids and set them to
+        persist (remove the expires time).
+        """
+        return client(
+            'post',
+            'assets/persist',
+            data={'uids': uids}
+        )
 
 class Variation(_BaseResource):
     """
@@ -283,10 +349,12 @@ class Variation(_BaseResource):
         r = asset._client(
             'put',
             f'assets/{asset.uid}/variations',
-            params={'notification_url': notification_url},
-            json_type_body={
-                name: [t.to_json_type() for t in transforms]
-                for name, transforms in variations.items()
+            data={
+                'notification_url': notification_url,
+                'variations': json.dumps({
+                    name: [t.to_json_type() for t in transforms]
+                    for name, transforms in variations.items()
+                }),
             }
         )
 
@@ -295,3 +363,43 @@ class Variation(_BaseResource):
                 n: cls(asset._client, asset, n, v)
                 for n, v in r['variations'].items()
             }
+
+    @classmethod
+    def create_many(
+        cls,
+        client,
+        uids,
+        variations,
+        local=False,
+        notification_url=None
+    ):
+        """
+        Find one or more assets matching the given uids and create a set of
+        variations for them.
+        """
+
+        if local:
+            variations_json = json.dumps({
+                uid: {
+                    name: [t.to_json_type() for t in transforms]
+                    for name, transforms in local_variations.items()
+                }
+                for uid, local_variations in variations.items()
+            })
+
+        else:
+            variations_json = json.dumps({
+                name: [t.to_json_type() for t in transforms]
+                for name, transforms in variations.items()
+            })
+
+        return client(
+            'put',
+            f'assets/transform',
+            data={
+                'local': True if local else None,
+                'notification_url': notification_url,
+                'uids': uids,
+                'variations': variations_json
+            }
+        )

@@ -29,7 +29,7 @@ with open('image.bmp') as f:
 
 # Analyze the image asset to find its dominant colours and focal point
 asset.analyze([
-    h51.transforms.images.DominantColours(),
+    h51.analyzers.images.DominantColors(),
     h51.analyzers.images.FocalPoint()
 ])
 
@@ -41,15 +41,15 @@ h51.resources.Variation.create(
             h51.transforms.images.AutoOrient(),
             h51.transforms.images.FocalPointCrop(aspect_ratio=0.5),
             h51.transforms.images.Fit(640, 640),
-            h51.transforms.images.Output('WEBP')
+            h51.transforms.images.Output('WebP')
         ],
         'x2': [
             h51.transforms.images.AutoOrient(),
             h51.transforms.images.FocalPointCrop(aspect_ratio=0.5),
             h51.transforms.images.Fit(1280, 1280),
-            h51.transforms.images.Output('WEBP')
+            h51.transforms.images.Output('WebP')
         ]
     }
-])
+)
 
 ```

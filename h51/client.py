@@ -61,7 +61,6 @@ class Client:
         path,
         params=None,
         data=None,
-        json_type_body=None,
         files=None,
         download=False
     ):
@@ -69,9 +68,6 @@ class Client:
 
         # Build headers
         headers = {'X-H51-APIKey': self._api_key}
-
-        if json_type_body:
-            headers['Content-Type'] = 'application/json'
 
         if not download:
             headers['Accept'] = 'application/json'
@@ -90,7 +86,6 @@ class Client:
             headers=headers,
             params=params,
             data=data,
-            json=json_type_body,
             files=files,
             timeout=self._timeout
         )
@@ -120,10 +115,7 @@ class Client:
         try:
             error = r.json()
 
-        except json.decoder.JSONDecodeError:
-            error = {}
-
-        if not isinstance(error, dict):
+        except ValueError:
             error = {}
 
         error_cls = exceptions.H51Exception.get_class_by_status_code(
