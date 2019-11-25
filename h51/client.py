@@ -121,11 +121,10 @@ class Client:
             error = r.json()
 
         except json.decoder.JSONDecodeError:
-            pass
+            error = {}
 
-        finally:
-            if not isinstance(error, dict):
-                error = {}
+        if not isinstance(error, dict):
+            error = {}
 
         error_cls = exceptions.H51Exception.get_class_by_status_code(
             r.status_code
