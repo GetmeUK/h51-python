@@ -21,7 +21,7 @@ setup(
     # Versions should comply with PEP440. For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.5',
+    version='0.0.6',
     description=\
         'The H51 Python library provides a pythonic interface to the H51 API.',
     long_description=long_description,

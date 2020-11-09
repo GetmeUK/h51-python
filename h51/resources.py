@@ -1,6 +1,7 @@
 
 from datetime import datetime
 import json
+import time
 
 from . import pagination
 
@@ -150,7 +151,7 @@ class Asset(_BaseResource):
         self._document.update(r)
 
     @classmethod
-    def all(self, client, secure=None, type=None, q=None, rate_buffer=0):
+    def all(cls, client, secure=None, type=None, q=None, rate_buffer=0):
         """
         Get all assets.
 
