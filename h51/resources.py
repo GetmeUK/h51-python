@@ -96,7 +96,7 @@ class Asset(_BaseResource):
             }
 
         else:
-            self.variations = {}
+            self._document['variations'] = {}
 
     def __str__(self):
         return f'Asset: {self.uid}'
