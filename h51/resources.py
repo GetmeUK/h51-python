@@ -305,6 +305,35 @@ class Asset(_BaseResource):
             data={'uids': uids}
         )
 
+    @classmethod
+    def zip(
+        cls,
+        client,
+        uids,
+        name,
+        expire=None,
+        secure=False,
+        notification_url=None
+    ):
+        """Create and store a ZIP archive from one or more existing assets"""
+        resposne = client(
+            'put',
+            f'assets/zip',
+            data={
+                'expire': expire,
+                'name': name,
+                'notification_url': notification_url,
+                'secure': True if secure else None,
+                'uids': uids
+            }
+        )
+
+        if notification_url:
+            return response
+
+        return cls(client, response)
+
+
 class Variation(_BaseResource):
     """
     A variation of an asset
