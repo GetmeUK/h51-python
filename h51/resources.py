@@ -316,7 +316,7 @@ class Asset(_BaseResource):
         notification_url=None
     ):
         """Create and store a ZIP archive from one or more existing assets"""
-        resposne = client(
+        response = client(
             'put',
             f'assets/zip',
             data={
