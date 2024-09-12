@@ -150,12 +150,13 @@ class Asset(_BaseResource):
 
         self._document.update(r)
 
-    def shallow_copy(self):
+    def shallow_copy(self, copies=1):
         """Shallow copy an asset (remove the expires time)"""
 
         r = self._client(
             'post',
-            f'assets/{self.uid}/shallow-copy'
+            f'assets/{self.uid}/shallow-copy',
+            data={'copies': copies}
         )
 
     @classmethod
@@ -314,7 +315,7 @@ class Asset(_BaseResource):
         )
 
     @classmethod
-    def shallow_copy_many(cls, client, uids):
+    def shallow_copy_many(cls, client, uids, copies=1):
         """
         Find one or more assets matching the given uids and shallow copy them
         (remove the expires time).
@@ -322,7 +323,10 @@ class Asset(_BaseResource):
         return client(
             'post',
             'assets/shallow-copy',
-            data={'uids': uids}
+            data={
+                'copies': copies,
+                'uids': uids
+            }
         )
 
     @classmethod
